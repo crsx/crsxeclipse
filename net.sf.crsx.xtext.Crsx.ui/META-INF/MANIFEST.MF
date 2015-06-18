@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.sf.crsx.xtext.Crsx.ui
+Bundle-Vendor: IBM
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: net.sf.crsx.xtext.Crsx.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: net.sf.crsx.xtext.Crsx;visibility:=reexport,
+ org.eclipse.xtext.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.ui,
+ org.eclipse.xtext.builder,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.compare
+Import-Package: org.apache.log4j,
+ org.apache.commons.logging
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: net.sf.crsx.xtext.ui.contentassist,
+ net.sf.crsx.xtext.ui.contentassist.antlr,
+ net.sf.crsx.xtext.ui.internal,
+ net.sf.crsx.xtext.ui.quickfix
+Bundle-Activator: net.sf.crsx.xtext.ui.internal.CrsxActivator

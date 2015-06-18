@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: net.sf.crsx.xtext.Crsx.tests
+Bundle-Vendor: IBM
+Bundle-Version: 1.0.0
+Bundle-SymbolicName: net.sf.crsx.xtext.Crsx.tests; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: net.sf.crsx.xtext.Crsx,
+ net.sf.crsx.xtext.Crsx.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.xtext,
+ org.eclipse.xtext.junit4,
+ org.eclipse.xtext.ui.junit,
+ org.eclipse.ui.workbench;resolution:=optional,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.log4j,
+ org.apache.commons.logging,
+ org.junit.runner;version="4.5.0",
+ org.junit.runner.manipulation;version="4.5.0",
+ org.junit.runner.notification;version="4.5.0",
+ org.junit.runners;version="4.5.0",
+ org.junit.runners.model;version="4.5.0",
+ org.hamcrest.core
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: net.sf.crsx.xtext

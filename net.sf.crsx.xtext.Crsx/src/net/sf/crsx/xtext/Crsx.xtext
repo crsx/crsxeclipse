@@ -1,0 +1,361 @@
+/* Copyright © 2012-2015 IBM Corporation. */
+grammar net.sf.crsx.xtext.Crsx hidden(WS, ML_COMMENT, SL_COMMENT, XML_COMMENT) 
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+generate crsx "http://www.sf.net/crsx/xtext/Crsx"
+ 
+ 
+// Declarations
+
+/**
+ * A CRSX declaration can be:
+ * 
+ * Term							(Term)
+ * Term	: Term					(Typed Term)
+ * 
+ * Term → Term					(Unnamed Rule)
+ * Term : Term → Term			(Named Rule)
+ *
+ * Term :: Term					(Function Sort)
+ * ∀ x . Term :: Term			(Polymorphic Function Sort)
+ *
+ * Term ::=( Terms )			(Data Sort)
+ * ∀ x . Term ::=( Terms )		(Polymorphic Data Sort)
+ */
+ Declaration:
+	(POLY polyvars+=Variable+ DOT)?  optionOrTerm=Term 
+		(
+			sep=COLON left=Term (ARROW right=Term)?	
+		|
+			(sep=ARROW | sep=COLONCOLON) right=Term
+		|
+			sep=COLONCOLONEQ LPAR terms=Declarations? RPAR 
+		)?
+;  
+
+Declarations returns Declarations :
+	{Declarations} terms+=Declaration (SEMICOLON terms+=Declaration?)*
+;
+ 
+/**
+ * A Term can be:
+ * 
+ * "String", Numeric								(Literal)
+ * {Properties}? (x y .)? x							(Variable)
+ * {Properties}? (x y .)? Constructor[ Terms ]		(Function/Data)
+ * {Properties}? (x y .)? 'Constructor'[ Terms ]	(Function/Data)
+ * {Properties}? (x y .)? MetaVariable[ Terms ]		(Pattern)
+ * {Properties}? (x y .)? $Directive [ Terms ]		(Directive)
+ * {Properties}? (x y .)? $[ Terms ]				(Builtin function)
+ * {Properties}? (x y .)? %Category << Term >>		(Embdedded term) 
+ * ( Terms ) 										(List of terms) 
+ */ 
+Term:
+	{Term} 
+	(
+		literal=Literal
+	    | (properties+=Properties | =>binders+=Binders)*
+			(	
+				variable=Variable 
+			|
+				(
+					constructor=Constructor
+				|
+					meta=METAVARIABLE
+				|
+					directive=INTERNAL
+				|
+					evaluator=EVALUATOR
+				) (LSQUARE (args+=Declaration (COMMA args+=Declaration)*)?  RSQUARE)?  
+			| 
+				embded=Embedded
+			)
+		| LPAR (terms+=Declaration (SEMICOLON terms+=Declaration?)*)? RPAR
+	)
+;
+
+Binders:
+	{Binders} binders+=Binder+ DOT
+;
+
+Binder:
+		name=Variable (
+			(COLON|COLONCOLON) 
+			( sort=(
+				(
+				 	LID
+				|
+					UID
+				|
+					INTERNAL
+				|
+					METAVARIABLE
+				)) (LSQUARE (args+=Declaration (COMMA args+=Declaration)*)?  RSQUARE)?
+			)
+		)?
+;
+
+
+Properties:
+	{Properties} LCURLY properties+=Property? (SEMICOLON properties+=Property?)* RCURLY
+;
+ 
+Property: 
+	{Property} 
+	(
+		//meta=METAVARIABLE 
+		left=Term (COLON right=Term)? 
+		| NOT notTerm=Term
+	)
+;
+
+Embedded:
+	{Embedded} 
+			(PERCENT 'n' text=EmbeddedText)
+		|
+		(
+			prefix=EmbeddedPrefix 
+		 	(
+				LEMBEDDED3 content+=EmbeddedContent* REMBEDDED3
+			|	
+				LEMBEDDED4 content+=EmbeddedContent* REMBEDDED4
+			|
+				LEMBEDDED5 content+=EmbeddedContent* REMBEDDED5
+			|
+				LEMBEDDED6 content+=EmbeddedContent* REMBEDDED6
+			|
+				LEMBEDDED7 content+=EmbeddedContent* REMBEDDED7
+			|
+				LEMBEDDED8 content+=EmbeddedContent* REMBEDDED8
+			|
+				LEMBEDDED9 content+=EmbeddedContent* REMBEDDED9
+			|
+				LEMBEDDED10 content+=EmbeddedContent* REMBEDDED10
+			|
+				LEMBEDDED11 content+=EmbeddedContent* REMBEDDED11
+			|
+				LEMBEDDED12 content+=EmbeddedContent* REMBEDDED12
+			|
+				LEMBEDDED13 content+=EmbeddedContent* REMBEDDED13
+			)
+			
+		)
+	
+;
+
+
+
+// Unknown Embedded content
+EmbeddedContent:
+	{EmbeddedContent} (
+		content=AnyContent
+	|	
+		embedded=EmbeddedEmbedded
+	)
+;
+  
+EmbeddedEmbedded:
+	{EmbeddedEmbedded} (
+		LEMBEDDED3 declaration=Declaration REMBEDDED3
+	|	
+		LEMBEDDED4 declaration=Declaration REMBEDDED4
+	|
+		LEMBEDDED5 declaration=Declaration REMBEDDED5
+	|
+		LEMBEDDED6 declaration=Declaration REMBEDDED6
+	|
+		LEMBEDDED7 declaration=Declaration REMBEDDED7
+	|
+		LEMBEDDED8 declaration=Declaration REMBEDDED8
+	|
+		LEMBEDDED9 declaration=Declaration REMBEDDED9
+	|
+		LEMBEDDED10 declaration=Declaration REMBEDDED10
+	|
+		LEMBEDDED11 declaration=Declaration REMBEDDED11
+	|
+		LEMBEDDED12 declaration=Declaration REMBEDDED12
+	|
+		LEMBEDDED13 declaration=Declaration REMBEDDED13
+	)
+;
+
+// Text Mode
+
+EmbeddedText :
+	{EmbeddedText} (
+		LEMBEDDED3 content+=EmbeddedTextContent* REMBEDDED3
+	|	
+		LEMBEDDED4 content+=EmbeddedTextContent* REMBEDDED4
+	|
+		LEMBEDDED5 content+=EmbeddedTextContent* REMBEDDED5
+	|
+		LEMBEDDED6 content+=EmbeddedTextContent* REMBEDDED6
+	|
+		LEMBEDDED7 content+=EmbeddedTextContent* REMBEDDED7
+	|
+		LEMBEDDED8 content+=EmbeddedTextContent* REMBEDDED8
+	|
+		LEMBEDDED9 content+=EmbeddedTextContent* REMBEDDED9
+	|
+		LEMBEDDED10 content+=EmbeddedTextContent* REMBEDDED10
+	|
+		LEMBEDDED11 content+=EmbeddedTextContent* REMBEDDED11
+	|
+		LEMBEDDED12 content+=EmbeddedTextContent* REMBEDDED12
+	|
+		LEMBEDDED13 content+=EmbeddedTextContent* REMBEDDED13
+		
+	)
+;
+
+EmbeddedTextContent:
+	{EmbeddedContent} (
+		chars=AnyContent
+	|	
+		LEMBEDDED3 econtent+=EmbeddedTextContent* REMBEDDED3 // Indent
+	|	
+		LESCAPE econtent+=EmbeddedTextContent* RESCAPE
+	|
+		LEMBEDDED6 econtent+=EmbeddedTextContent* REMBEDDED6
+	|
+		embedded=EmbeddedTextEmbedded
+	)
+;
+
+EmbeddedTextEmbedded:
+	{EmbeddedEmbedded} (
+		LEMBEDDED4 declaration=Declaration REMBEDDED4
+	|
+		LEMBEDDED5 declaration=Declaration REMBEDDED5
+	|
+		LEMBEDDED7 declaration=Declaration REMBEDDED7
+	|
+		LEMBEDDED8 declaration=Declaration REMBEDDED8
+	|
+		LEMBEDDED9 declaration=Declaration REMBEDDED9
+	|
+		LEMBEDDED10 declaration=Declaration REMBEDDED10
+	|
+		LEMBEDDED11 declaration=Declaration REMBEDDED11
+	|
+		LEMBEDDED12 declaration=Declaration REMBEDDED12
+	|
+		LEMBEDDED13 declaration=Declaration REMBEDDED13
+	)
+;
+
+/** A function or data construction. When declarations is null, this is a data constructor */
+Constructor:
+	{Constructor} (declaration=[Declaration|ATOM] | declaration=[Declaration|UID] | declaration=[Declaration|COLON])
+;
+
+// Data Rules
+
+Literal returns ecore::EString: 
+	STRING | NUMERIC
+;
+
+AnyContent returns ecore::EString:  
+	LID | UID | INTERNAL | EVALUATOR|METAVARIABLE|NUMERIC|NOT|ATOM|STRING|ARROW|POLY|DOT|COLON|COLONCOLON|COLONCOLONEQ|LCURLY|RCURLY|LSQUARE|RSQUARE|LPAR|RPAR|SEMICOLON|COMMA|PERCENT|EXCLAMATION|ARROBA|LT|GT|ACCENT|LTEX|LTEXDASH|EXGT|DASHEXGT|ANY
+;
+
+Variable returns ecore::EString hidden():
+	LID 
+;
+
+EmbeddedPrefix returns ecore::EString hidden():
+	PERCENT LID
+;
+ 
+
+
+terminal LID			: LINEAR? LOWER (ALPHANUMERIC | OTHER)* LINEAR? FUNCTIONAL?;
+terminal UID			: (UPPER | '-') (ALPHANUMERIC | OTHER)*;
+
+terminal fragment LINEAR 		: '¹';
+terminal fragment FUNCTIONAL	: 'ᵇ';
+
+terminal INTERNAL		: '$' (UID|LID);
+terminal EVALUATOR		: '$';
+terminal METAVARIABLE 	: '#' (LOWER | UPPER | DIGIT | OTHER)*; 
+
+terminal NUMERIC 		: (DIGIT)+ ("." DIGIT+)? (("E"|"e") DIGIT+)?;
+terminal NOT			: '¬';
+
+terminal ATOM 			: "'" -> "'"; //: "'" ( ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\')) | !('\\'|"'") )* "'";
+terminal STRING			: '"' ( ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\')) | !('\\'|'"') )* '"';
+ 
+terminal ARROW			: '→';
+terminal POLY			: '∀';
+terminal DOT			: '.';
+terminal PERCENT		: '%';
+terminal EXCLAMATION	: '!';
+terminal ARROBA			: '@';
+terminal ACCENT			: '^';
+terminal LT				: '<';
+terminal GT				: '>';
+
+terminal LTEX			: '<!';
+terminal LTEXDASH		: '<!-';
+terminal EXGT			: '!>';
+terminal DASHEXGT		: '-!>';
+
+terminal COLONCOLONEQ	: '::=';
+terminal COLONCOLON		: '::';
+terminal COLON			: ':';
+terminal SEMICOLON		: ';';
+terminal COMMA			: ',';
+
+terminal LCURLY			: '{';
+terminal RCURLY			: '}'; 
+
+terminal LSQUARE		: '[';
+terminal RSQUARE		: ']';
+
+terminal LPAR			: '(';
+terminal RPAR			: ')';
+
+terminal LESCAPE		: '“';
+terminal RESCAPE 		: '”';
+
+terminal LEMBEDDED3		: '⟦';
+terminal LEMBEDDED4		: "⟨";
+terminal LEMBEDDED5		: "⟪";
+terminal LEMBEDDED6		: "⦃";
+terminal LEMBEDDED7		: "⌈";
+terminal LEMBEDDED8		: "⌊";
+terminal LEMBEDDED9		: "❨";
+terminal LEMBEDDED10 	: '«';
+terminal LEMBEDDED11 	: '‹';
+terminal LEMBEDDED12 	: '⧼';
+terminal LEMBEDDED13 	: '‘';
+
+terminal REMBEDDED3 	: '⟧';
+terminal REMBEDDED4		: "⟩";
+terminal REMBEDDED5		: "⟫";
+terminal REMBEDDED6		: "⦄";
+terminal REMBEDDED7		: "⌉";
+terminal REMBEDDED8		: "⌋";
+terminal REMBEDDED9		: "❩";
+terminal REMBEDDED10 	: '»';
+terminal REMBEDDED11 	: '›';
+terminal REMBEDDED12 	: '⧽';
+terminal REMBEDDED13 	: '’';
+
+terminal START_XML		: '<!--';
+terminal END_XML		: '-->';
+
+terminal ML_COMMENT		: '/*' -> '*/';
+terminal XML_COMMENT	: START_XML -> END_XML;
+terminal SL_COMMENT 	: '//' !('\n'|'\r')* ('\r'? '\n')?;
+terminal WS				: (' '|'\t'|'\r'|'\n')+;
+
+terminal ANY			: .;
+
+terminal fragment ALPHANUMERIC 		: UPPER | LOWER | DIGIT;
+terminal fragment DIGIT				: '0'..'9';
+terminal fragment UPPER 			: 'A'..'Z'|'_' ; //|"\u00C0"|"\u00D6"|"\u00D8".."\u00DE";
+terminal fragment LOWER 			: 'a'..'z'; // |"\u00DF".."\u00F6"|"\u00F8".."\u00FF"; 
+terminal fragment OTHER				: '@'|'^'|'*'|'+'|'-'|'`'|'|'| '#'|'/'|'!'|'?'|'%'|'='|'~'|'\u2190'..'\u21ff';
