@@ -258,7 +258,7 @@ Literal returns ecore::EString:
 ;
 
 AnyContent returns ecore::EString:  
-	LID | UID | INTERNAL | EVALUATOR|METAVARIABLE|NUMERIC|NOT|ATOM|STRING|ARROW|POLY|DOT|COLON|COLONCOLON|COLONCOLONEQ|LCURLY|RCURLY|LSQUARE|RSQUARE|LPAR|RPAR|SEMICOLON|COMMA|PERCENT|EXCLAMATION|ARROBA|LT|GT|ACCENT|LTEX|LTEXDASH|EXGT|DASHEXGT|ANY
+	LID | UID | INTERNAL | EVALUATOR|METAVARIABLE|NUMERIC|NOT|ATOM|STRING|ARROW|POLY|DOT|COLON|COLONCOLON|COLONCOLONEQ|LCURLY|RCURLY|LSQUARE|RSQUARE|LPAR|RPAR|SEMICOLON|COMMA|PERCENT|LT|GT|LTEX|LTEXDASH|EXGT|DASHEXGT|ANY
 ;
 
 Variable returns ecore::EString hidden():
@@ -272,7 +272,7 @@ EmbeddedPrefix returns ecore::EString hidden():
 
 
 terminal LID			: LINEAR? LOWER (ALPHANUMERIC | OTHER)* LINEAR? FUNCTIONAL?;
-terminal UID			: (UPPER | '-') (ALPHANUMERIC | OTHER)*;
+terminal UID			: (UPPER ALPHANUMERIC*) | ('@'|'^'|'*'|'+'|'`'|'|'| '#'|'/'|'!'|'?'|'='|'~')+;
 
 terminal fragment LINEAR 		: '¹';
 terminal fragment FUNCTIONAL	: 'ᵇ';
@@ -291,9 +291,6 @@ terminal ARROW			: '→';
 terminal POLY			: '∀';
 terminal DOT			: '.';
 terminal PERCENT		: '%';
-terminal EXCLAMATION	: '!';
-terminal ARROBA			: '@';
-terminal ACCENT			: '^';
 terminal LT				: '<';
 terminal GT				: '>';
 
@@ -356,6 +353,6 @@ terminal ANY			: .;
 
 terminal fragment ALPHANUMERIC 		: UPPER | LOWER | DIGIT;
 terminal fragment DIGIT				: '0'..'9';
-terminal fragment UPPER 			: 'A'..'Z'|'_' ; //|"\u00C0"|"\u00D6"|"\u00D8".."\u00DE";
+terminal fragment UPPER 			: 'A'..'Z'|'_'|'-' ; //|"\u00C0"|"\u00D6"|"\u00D8".."\u00DE";
 terminal fragment LOWER 			: 'a'..'z'; // |"\u00DF".."\u00F6"|"\u00F8".."\u00FF"; 
 terminal fragment OTHER				: '@'|'^'|'*'|'+'|'-'|'`'|'|'| '#'|'/'|'!'|'?'|'%'|'='|'~'|'\u2190'..'\u21ff';
