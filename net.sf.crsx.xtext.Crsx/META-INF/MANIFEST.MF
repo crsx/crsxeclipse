@@ -37,4 +37,5 @@ Export-Package: net.sf.crsx.xtext,
  net.sf.crsx.xtext.validation,
  net.sf.crsx.xtext.scoping,
  net.sf.crsx.xtext.generator,
- net.sf.crsx.xtext.formatting
+ net.sf.crsx.xtext.formatting,
+ net.sf.crsx.xtext.parser.antlr.lexer

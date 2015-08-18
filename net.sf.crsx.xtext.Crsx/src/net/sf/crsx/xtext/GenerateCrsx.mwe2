@@ -67,11 +67,21 @@ Workflow {
                 fileExtensions = file.extensions
             }
 
-            // The antlr parser generator fragment.
-            fragment = parser.antlr.XtextAntlrGeneratorFragment {
-            //  options = {
-            //      backtrack = true
-            //  }
+            
+            fragment = org.eclipse.xtext.generator.parser.antlr.ex.rt.AntlrGeneratorFragment {
+                options = {
+                    backtrack = false
+                    backtrackLexer = false
+                }
+            }
+            
+            // Custom Antlr lexer
+            fragment = parser.antlr.ex.ExternalAntlrLexerFragment {
+                lexerGrammar = "net.sf.crsx.xtext.lexer.CrsxCustomLexer"
+                runtime = true
+                antlrParam = "-lib"
+                // This is the folder where the lexer will be created
+                antlrParam = "${runtimeProject}/src-gen/net/sf/crsx/xtext/lexer"
             }
 
             // java-based API for validation
