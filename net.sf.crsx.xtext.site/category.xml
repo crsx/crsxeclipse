@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/net.sf.crsx.xtext_0.0.0.jar" id="net.sf.crsx.xtext" version="0.0.0">
+      <category name="net.sf.crsx.xtext"/>
+   </feature>
+   <category-def name="net.sf.crsx.xtext" label="CRSX"/>
+</site>

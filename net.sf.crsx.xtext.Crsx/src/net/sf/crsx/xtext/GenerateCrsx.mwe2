@@ -4,15 +4,27 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var grammarURI = "classpath:/net/sf/crsx/xtext/Crsx.xtext"
-var file.extensions = "crs"
 var projectName = "net.sf.crsx.xtext.Crsx"
+var grammarURI = "platform:/resource/${projectName}/src/net/sf/crsx/xtext/Crsx.xtext"
+var file.extensions = "crs"
 var runtimeProject = "../${projectName}"
 
 Workflow {
     bean = StandaloneSetup {
-        scanClassPath = true
-        platformUri = "${runtimeProject}/.."
+        // use an XtextResourceset throughout the process, which is able to resolve classpath:/ URIs.
+        resourceSet = org.eclipse.xtext.resource.XtextResourceSet:theResourceSet {}
+
+        // add mappings from platform:/resource to classpath:/
+        uriMap = {
+          from = "platform:/resource/org.eclipse.xtext.xbase/"
+          to = "classpath:/"
+        }
+        uriMap = {
+          from = "platform:/resource/org.eclipse.xtext.common.types/"
+          to = "classpath:/"
+        }
+
+        platformUri = ".."
         // The following two lines can be removed, if Xbase is not used.
         //registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
         //registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
