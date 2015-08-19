@@ -112,10 +112,10 @@ Property:
 
 Embedded:
 	{Embedded} 
-			(PERCENT 'n' text=EmbeddedText)
+			(EMBEDDED_TEXT text=EmbeddedText)
 		|
 		(
-			prefix=EmbeddedPrefix 
+			prefix=EMBEDDED_OTHER 
 		 	(
 				LEMBEDDED3 content+=EmbeddedContent* REMBEDDED3
 			|	
@@ -149,7 +149,7 @@ Embedded:
 // Unknown Embedded content
 EmbeddedContent:
 	{EmbeddedContent} (
-		content=AnyContent
+		content=EmbeddedText
 	|	
 		embedded=EmbeddedEmbedded
 	)
@@ -212,11 +212,11 @@ EmbeddedText :
 
 EmbeddedTextContent:
 	{EmbeddedContent} (
-		chars=AnyContent
+		text=TEXT_TOKEN
 	|	
 		LEMBEDDED3 econtent+=EmbeddedTextContent* REMBEDDED3 // Indent
 	|	
-		LESCAPE econtent+=EmbeddedTextContent* RESCAPE
+		text=TEXT_ESCAPED_TOKEN
 	|
 		LEMBEDDED6 econtent+=EmbeddedTextContent* REMBEDDED6
 	|
@@ -257,20 +257,15 @@ Literal returns ecore::EString:
 	STRING | NUMERIC
 ;
 
-AnyContent returns ecore::EString:  
-	LID | UID | INTERNAL | EVALUATOR|METAVARIABLE|NUMERIC|NOT|ATOM|STRING|ARROW|POLY|DOT|COLON|COLONCOLON|COLONCOLONEQ|LCURLY|RCURLY|LSQUARE|RSQUARE|LPAR|RPAR|SEMICOLON|COMMA|PERCENT|LT|GT|LTEX|LTEXDASH|EXGT|DASHEXGT|ANY
-;
-
 Variable returns ecore::EString hidden():
 	LID 
 ;
 
-EmbeddedPrefix returns ecore::EString hidden():
-	PERCENT LID
-;
+/* All terminal definitions will be ignored for actual lexer 
+ * (which is implemented in /src/net/sf/crsx/xtext/lexer/CrsxCustomLexer.g),
+ * however definitions below are still required and the terminal names
+ * must match with ones in CrsxCustomLexer.g */
  
-
-
 terminal LID			: LINEAR? LOWER (ALPHANUMERIC | OTHER)* LINEAR? FUNCTIONAL?;
 terminal UID			: (UPPER ALPHANUMERIC*) | ('@'|'^'|'*'|'+'|'`'|'|'| '#'|'/'|'!'|'?'|'='|'~')+;
 
@@ -290,7 +285,8 @@ terminal STRING			: '"' ( ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\')) | !('\\'
 terminal ARROW			: '→';
 terminal POLY			: '∀';
 terminal DOT			: '.';
-terminal PERCENT		: '%';
+terminal EMBEDDED_TEXT  : '%n';
+terminal EMBEDDED_OTHER : '%' !('n');
 terminal LT				: '<';
 terminal GT				: '>';
 
@@ -313,9 +309,6 @@ terminal RSQUARE		: ']';
 
 terminal LPAR			: '(';
 terminal RPAR			: ')';
-
-terminal LESCAPE		: '“';
-terminal RESCAPE 		: '”';
 
 terminal LEMBEDDED3		: '⟦';
 terminal LEMBEDDED4		: "⟨";
@@ -349,7 +342,8 @@ terminal XML_COMMENT	: START_XML -> END_XML;
 terminal SL_COMMENT 	: '//' !('\n'|'\r')* ('\r'? '\n')?;
 terminal WS				: (' '|'\t'|'\r'|'\n')+;
 
-terminal ANY			: .;
+terminal TEXT_TOKEN: !('⟦'|"⟨"|"⟪"|"⦃"|"⌈"|"⌊"|"❨"|'«'|'‹'|'⧼'|'‘'|'⟧'|"⟩"|'⟫'|"⦄"|"⌉"|"⌋"|"❩"|'»'|'›'|'⧽'|'’'|'“'|'”')+;
+terminal TEXT_ESCAPED_TOKEN: '“' -> '”';
 
 terminal fragment ALPHANUMERIC 		: UPPER | LOWER | DIGIT;
 terminal fragment DIGIT				: '0'..'9';
