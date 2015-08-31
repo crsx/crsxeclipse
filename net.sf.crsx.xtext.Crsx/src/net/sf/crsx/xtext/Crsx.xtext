@@ -112,73 +112,76 @@ Property:
 
 Embedded:
 	{Embedded} 
-			(EMBEDDED_TEXT text=EmbeddedText)
-		|
-		(
-			prefix=EMBEDDED_OTHER 
-		 	(
-				LEMBEDDED3 content+=EmbeddedContent* REMBEDDED3
-			|	
-				LEMBEDDED4 content+=EmbeddedContent* REMBEDDED4
-			|
-				LEMBEDDED5 content+=EmbeddedContent* REMBEDDED5
-			|
-				LEMBEDDED6 content+=EmbeddedContent* REMBEDDED6
-			|
-				LEMBEDDED7 content+=EmbeddedContent* REMBEDDED7
-			|
-				LEMBEDDED8 content+=EmbeddedContent* REMBEDDED8
-			|
-				LEMBEDDED9 content+=EmbeddedContent* REMBEDDED9
-			|
-				LEMBEDDED10 content+=EmbeddedContent* REMBEDDED10
-			|
-				LEMBEDDED11 content+=EmbeddedContent* REMBEDDED11
-			|
-				LEMBEDDED12 content+=EmbeddedContent* REMBEDDED12
-			|
-				LEMBEDDED13 content+=EmbeddedContent* REMBEDDED13
-			)
+		(prefix=EMBEDDED_TEXT text=EmbeddedText)|
+		(prefix=EMBEDDED_OTHER embedded=EmbeddedOther)
 			
-		)
 	
 ;
 
 
 
 // Unknown Embedded content
-EmbeddedContent:
-	{EmbeddedContent} (
-		content=EmbeddedText
-	|	
-		embedded=EmbeddedEmbedded
-	)
+EmbeddedOther:
+	{EmbeddedOther} (
+        LEMBEDDED3 content+=EmbeddedOtherContent* REMBEDDED3
+    |   
+        LEMBEDDED4 content+=EmbeddedOtherContent* REMBEDDED4
+    |
+        LEMBEDDED5 content+=EmbeddedOtherContent* REMBEDDED5
+    |
+        LEMBEDDED6 content+=EmbeddedOtherContent* REMBEDDED6
+    |
+        LEMBEDDED7 content+=EmbeddedOtherContent* REMBEDDED7
+    |
+        LEMBEDDED8 content+=EmbeddedOtherContent* REMBEDDED8
+    |
+        LEMBEDDED9 content+=EmbeddedOtherContent* REMBEDDED9
+    |
+        LEMBEDDED10 content+=EmbeddedOtherContent* REMBEDDED10
+    |
+        LEMBEDDED11 content+=EmbeddedOtherContent* REMBEDDED11
+    |
+        LEMBEDDED12 content+=EmbeddedOtherContent* REMBEDDED12
+    |
+        LEMBEDDED13 content+=EmbeddedOtherContent* REMBEDDED13
+    )
 ;
-  
-EmbeddedEmbedded:
-	{EmbeddedEmbedded} (
-		LEMBEDDED3 declaration=Declaration REMBEDDED3
-	|	
-		LEMBEDDED4 declaration=Declaration REMBEDDED4
-	|
-		LEMBEDDED5 declaration=Declaration REMBEDDED5
-	|
-		LEMBEDDED6 declaration=Declaration REMBEDDED6
-	|
-		LEMBEDDED7 declaration=Declaration REMBEDDED7
-	|
-		LEMBEDDED8 declaration=Declaration REMBEDDED8
-	|
-		LEMBEDDED9 declaration=Declaration REMBEDDED9
-	|
-		LEMBEDDED10 declaration=Declaration REMBEDDED10
-	|
-		LEMBEDDED11 declaration=Declaration REMBEDDED11
-	|
-		LEMBEDDED12 declaration=Declaration REMBEDDED12
-	|
-		LEMBEDDED13 declaration=Declaration REMBEDDED13
-	)
+
+EmbeddedOtherContent:
+    {EmbeddedOtherContent} (
+        text=TEXT_TOKEN
+    |   
+        text=TEXT_ESCAPED_TOKEN
+    |
+        embedded=EmbeddedOtherEmbedded
+    )
+;
+
+
+EmbeddedOtherEmbedded:
+    {EmbeddedEmbedded} (
+        LEMBEDDED3 declaration=Declaration REMBEDDED4
+    |
+        LEMBEDDED4 declaration=Declaration REMBEDDED4
+    |
+        LEMBEDDED5 declaration=Declaration REMBEDDED5
+    |
+        LEMBEDDED6 declaration=Declaration REMBEDDED6
+    |
+        LEMBEDDED7 declaration=Declaration REMBEDDED7
+    |
+        LEMBEDDED8 declaration=Declaration REMBEDDED8
+    |
+        LEMBEDDED9 declaration=Declaration REMBEDDED9
+    |
+        LEMBEDDED10 declaration=Declaration REMBEDDED10
+    |
+        LEMBEDDED11 declaration=Declaration REMBEDDED11
+    |
+        LEMBEDDED12 declaration=Declaration REMBEDDED12
+    |
+        LEMBEDDED13 declaration=Declaration REMBEDDED13
+    )
 ;
 
 // Text Mode

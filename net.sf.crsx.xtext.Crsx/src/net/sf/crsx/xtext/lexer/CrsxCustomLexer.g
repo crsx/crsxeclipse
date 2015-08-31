@@ -22,7 +22,8 @@ import java.util.Stack;
         DEFAULT,
         EMBEDDED_TEXT,
         EMBEDDED_TEXT_BEFORE_BRACKET,
-        EMBEDDED_OTHER
+        EMBEDDED_OTHER,
+        EMBEDDED_OTHER_BEFORE_BRACKET
     };
     
     Stack<State> stack = new Stack<State>();
@@ -50,6 +51,9 @@ import java.util.Stack;
                 break;
             case EMBEDDED_TEXT_BEFORE_BRACKET:
                 switchCurrentState(State.EMBEDDED_TEXT);
+                break;
+            case EMBEDDED_OTHER_BEFORE_BRACKET:
+                switchCurrentState(State.EMBEDDED_OTHER);
                 break;
             case DEFAULT:
             default:
@@ -93,7 +97,8 @@ RULE_DOT : { getCurrentState() == State.DEFAULT }?=> '.';
 RULE_PERCENT : '%';
 */
 RULE_EMBEDDED_TEXT  : { getCurrentState() == State.DEFAULT }?=> '%n' { stack.push(State.EMBEDDED_TEXT_BEFORE_BRACKET); };
-RULE_EMBEDDED_OTHER : { getCurrentState() == State.DEFAULT }?=> '%' ~('n');
+RULE_EMBEDDED_OTHER : { getCurrentState() == State.DEFAULT }?=> '%' ~('n') ( RULE_LOWER | RULE_UPPER )* ('*'|'?'|'+')? 
+                                                                {stack.push(State.EMBEDDED_OTHER_BEFORE_BRACKET);};
 
 RULE_LT : { getCurrentState() == State.DEFAULT }?=> '<';
 
@@ -202,7 +207,8 @@ RULE_SL_COMMENT : '//' ~(('\n'|'\r'))* ('\r'? '\n')?;
 
 RULE_WS : (' '|'\t'|'\r'|'\n')+;
 
-RULE_TEXT_TOKEN : { getCurrentState() == State.EMBEDDED_TEXT }?=> 
+RULE_TEXT_TOKEN : { (getCurrentState() == State.EMBEDDED_TEXT) 
+                 || (getCurrentState() == State.EMBEDDED_OTHER) }?=> 
               ~(('\u27E6'|'\u27E8'|'\u27EA'|'\u2983'|'\u2308'|'\u230A'
                 |'\u2768'|'\u00AB'|'\u2039'|'\u29FC'|'\u2018'|'\u27E7'
                 |'\u27E9'|'\u27EB'|'\u2984'|'\u2309'|'\u230B'|'\u2769'
