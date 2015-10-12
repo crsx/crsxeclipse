@@ -27,15 +27,16 @@ Import-Package: org.apache.log4j,
  org.eclipse.xtend2.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: net.sf.crsx.xtext,
- net.sf.crsx.xtext.services,
  net.sf.crsx.xtext.crsx,
  net.sf.crsx.xtext.crsx.impl,
  net.sf.crsx.xtext.crsx.util,
- net.sf.crsx.xtext.serializer,
+ net.sf.crsx.xtext.formatting,
+ net.sf.crsx.xtext.generator,
+ net.sf.crsx.xtext.lexer,
  net.sf.crsx.xtext.parser.antlr,
  net.sf.crsx.xtext.parser.antlr.internal,
- net.sf.crsx.xtext.validation,
+ net.sf.crsx.xtext.parser.antlr.lexer,
  net.sf.crsx.xtext.scoping,
- net.sf.crsx.xtext.generator,
- net.sf.crsx.xtext.formatting,
- net.sf.crsx.xtext.parser.antlr.lexer
+ net.sf.crsx.xtext.serializer,
+ net.sf.crsx.xtext.services,
+ net.sf.crsx.xtext.validation
