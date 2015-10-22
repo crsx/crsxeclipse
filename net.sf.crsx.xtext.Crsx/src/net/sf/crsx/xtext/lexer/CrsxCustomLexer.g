@@ -10,7 +10,7 @@ package net.sf.crsx.xtext.lexer;
 
 // Hack: Use our own Lexer superclass by means of import. 
 // Currently there is no other way to specify the superclass for the lexer.
-import org.eclipse.xtext.parser.antlr.Lexer;
+import net.sf.crsx.xtext.lexer.Lexer;
 
 import java.util.Stack;
 }
