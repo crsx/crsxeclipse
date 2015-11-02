@@ -4,6 +4,8 @@
  */
 lexer grammar CrsxCustomLexer;
 
+options {filter=true;}
+
 
 @header {
 package net.sf.crsx.xtext.lexer;
@@ -68,7 +70,7 @@ import java.util.Stack;
 
 RULE_LID : { getCurrentState() == State.DEFAULT }?=> RULE_LINEAR? RULE_LOWER (RULE_ALPHANUMERIC|RULE_OTHER)* RULE_LINEAR? RULE_FUNCTIONAL?;
 
-RULE_UID : { getCurrentState() == State.DEFAULT }?=> (RULE_UPPER RULE_ALPHANUMERIC*|('@'|'^'|'*'|'+'|'`'|'|'|'#'|'/'|'!'|'?'|'='|'~')+);
+RULE_UID : { getCurrentState() == State.DEFAULT }?=> (RULE_UPPER RULE_ALPHANUMERIC*|('@'|'^'|'*'|'+'|'`'|'|'|'!'|'?'|'='|'~')+);
 
 fragment RULE_LINEAR : { getCurrentState() == State.DEFAULT }?=> '\u00B9';
 
@@ -93,24 +95,11 @@ RULE_ARROW : { getCurrentState() == State.DEFAULT }?=> '\u2192';
 RULE_POLY : { getCurrentState() == State.DEFAULT }?=> '\u2200';
 
 RULE_DOT : { getCurrentState() == State.DEFAULT }?=> '.';
-/*
-RULE_PERCENT : '%';
-*/
+
 RULE_EMBEDDED_TEXT  : { getCurrentState() == State.DEFAULT }?=> '%n' { stack.push(State.EMBEDDED_TEXT_BEFORE_BRACKET); };
 RULE_EMBEDDED_OTHER : { getCurrentState() == State.DEFAULT }?=> '%' ~('n') ( RULE_LOWER | RULE_UPPER )* ('*'|'?'|'+')? 
                                                                 {stack.push(State.EMBEDDED_OTHER_BEFORE_BRACKET);};
 
-RULE_LT : { getCurrentState() == State.DEFAULT }?=> '<';
-
-RULE_GT : { getCurrentState() == State.DEFAULT }?=> '>';
-
-RULE_LTEX : { getCurrentState() == State.DEFAULT }?=> '<!';
-
-RULE_LTEXDASH : { getCurrentState() == State.DEFAULT }?=> '<!-';
-
-RULE_EXGT : { getCurrentState() == State.DEFAULT }?=> '!>';
-
-RULE_DASHEXGT : { getCurrentState() == State.DEFAULT }?=> '-!>';
 
 RULE_COLONCOLONEQ : { getCurrentState() == State.DEFAULT }?=> '::=';
 
@@ -133,10 +122,6 @@ RULE_RSQUARE : { getCurrentState() == State.DEFAULT }?=> ']';
 RULE_LPAR : { getCurrentState() == State.DEFAULT }?=> '(';
 
 RULE_RPAR : { getCurrentState() == State.DEFAULT }?=> ')';
-
-//RULE_LESCAPE : '\u201C';
-
-//RULE_RESCAPE : '\u201D';
 
 RULE_LEMBEDDED3 : '\u27E6' {
  if( getCurrentState() == State.EMBEDDED_TEXT ){
@@ -195,13 +180,9 @@ RULE_REMBEDDED12 : '\u29FD' { if (!stack.empty()){ stack.pop();}; } ;
 
 RULE_REMBEDDED13 : '\u2019' { if (!stack.empty()){ stack.pop();}; } ;
 
-RULE_START_XML : '<!--';
+RULE_ML_COMMENT : '/*' ( options {greedy=false;} : . )* '*/';
 
-RULE_END_XML : '-->';
-
-RULE_ML_COMMENT : '/*' ( options {greedy=false;} : . )*'*/';
-
-RULE_XML_COMMENT : RULE_START_XML ( options {greedy=false;} : . )*RULE_END_XML;
+RULE_XML_COMMENT : '<!--' ( options {greedy=false;} : . )* '-->';
 
 RULE_SL_COMMENT : '//' ~(('\n'|'\r'))* ('\r'? '\n')?;
 

@@ -289,14 +289,7 @@ terminal ARROW			: '→';
 terminal POLY			: '∀';
 terminal DOT			: '.';
 terminal EMBEDDED_TEXT  : '%n';
-terminal EMBEDDED_OTHER : '%' !('n');
-terminal LT				: '<';
-terminal GT				: '>';
-
-terminal LTEX			: '<!';
-terminal LTEXDASH		: '<!-';
-terminal EXGT			: '!>';
-terminal DASHEXGT		: '-!>';
+terminal EMBEDDED_OTHER : '%' !('n')  ( LOWER | UPPER )* ('*'|'?'|'+')? ;
 
 terminal COLONCOLONEQ	: '::=';
 terminal COLONCOLON		: '::';
@@ -337,11 +330,8 @@ terminal REMBEDDED11 	: '›';
 terminal REMBEDDED12 	: '⧽';
 terminal REMBEDDED13 	: '’';
 
-terminal START_XML		: '<!--';
-terminal END_XML		: '-->';
-
 terminal ML_COMMENT		: '/*' -> '*/';
-terminal XML_COMMENT	: START_XML -> END_XML;
+terminal XML_COMMENT	: '<!--' -> '-->';
 terminal SL_COMMENT 	: '//' !('\n'|'\r')* ('\r'? '\n')?;
 terminal WS				: (' '|'\t'|'\r'|'\n')+;
 
