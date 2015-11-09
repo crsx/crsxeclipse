@@ -3,12 +3,130 @@
 */
 package net.sf.crsx.xtext.ui.outline;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
+import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
+
+import net.sf.crsx.xtext.Utils;
+import net.sf.crsx.xtext.crsx.Declaration;
+import net.sf.crsx.xtext.crsx.Term;
 
 /**
  * customization of the default outline structure
  * 
  */
 public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
+	
+	/**
+	 * Creates outline node for declaration
+	 * 
+	 * If the declaration is just a term, declaration node is skipped in
+	 * outline view and node for term is included
+	 * 
+	 * @param parentNode Outline view parent node
+	 * @param declaration ecore model declaration node
+	 */
+	protected void _createNode(IOutlineNode parentNode, Declaration declaration) {
+		Utils.CrsxDeclarationType declType = Utils.determineDeclarationType(declaration);
+		if( declType == Utils.CrsxDeclarationType.TERM ||
+				declType == Utils.CrsxDeclarationType.GROUP ){
+			createNodeDispatcher.invoke(parentNode,declaration.getOptionOrTerm());
+		}else{
+			Object text = textDispatcher.invoke(declaration);
+			boolean isLeaf = isLeafDispatcher.invoke(declaration);
+			if (text == null && isLeaf)
+				return;
+			Image image = imageDispatcher.invoke(declaration);
+			createEObjectNode(parentNode, declaration, image, text, isLeaf);
+		}
+	}
+	
+	/**
+	 * Create document root children
+	 * 
+	 * If root of the document is declaration group (namespace), skip creation of
+	 * declaration node
+	 * 
+	 * @param parentNode
+	 * @param declaration
+	 */
+	protected void _createChildren(DocumentRootNode parentNode, Declaration declaration) {
+		Utils.CrsxDeclarationType declType = Utils.determineDeclarationType(declaration);
+		if( declType == Utils.CrsxDeclarationType.TERM ||
+				declType == Utils.CrsxDeclarationType.GROUP ){
+			createNodeDispatcher.invoke(parentNode,declaration.getOptionOrTerm());
+		}else{
+			createNode(parentNode, declaration);
+		}
+	}
+
+	
+	/**
+	 * Creates outline node for term
+	 * 
+	 * If the term is just list of terms, it is ommitted and children are directly 
+	 * added to the parent term
+	 * 
+	 * @param parentNode
+	 * @param term
+	 */
+	protected void _createNode(IOutlineNode parentNode, Term term) {
+		if (!term.getTerms().isEmpty()){
+			for(Declaration decl : term.getTerms()){
+				createNode(parentNode,decl);
+			}
+		}else{
+			Object text = textDispatcher.invoke(term);
+			boolean isLeaf = isLeafDispatcher.invoke(term);
+			if (text == null && isLeaf)
+				return;
+			Image image = imageDispatcher.invoke(term);
+			createEObjectNode(parentNode, term, image, text, isLeaf);
+		}
+	}
+
+	/**
+	 * Determines if declaration node is leaf in outline view
+	 * 
+	 * If declaration is function sort or rule, it's children are
+	 * not included in the outline view, otherwise they are
+	 * 
+	 * @param declaration
+	 * @return
+	 */
+	protected boolean _isLeaf(final Declaration declaration) {
+		Utils.CrsxDeclarationType declType = Utils.determineDeclarationType(declaration);
+		switch (declType){
+		case FUNCTION_SORT:
+		case POLYMORPHIC_FUNCTION_SORT:
+		case DATA_SORT:
+		case POLYMORPHIC_DATA_SORT:
+		case NAMED_RULE:
+		case RULE:
+			return true;
+		default:
+			return false;	
+		}
+	}
+	
+	/**
+	 * Determines whether term should be a leaf in outline view
+	 * 
+	 * @param term
+	 * @return
+	 */
+	protected boolean _isLeaf(final Term term) {
+		Utils.CrsxTermType termType = Utils.determineTermType(term);
+		switch(termType){
+			case DIRECTIVE_USE:
+			case DIRECTIVE_ADD_GRAMMAR:
+			case DIRECTIVE_LAX:
+			case DIRECTIVE_OTHER:
+				return true;
+			default:
+				return false;
+		}
+	}
 	
 }
