@@ -97,7 +97,7 @@ RULE_POLY : { getCurrentState() == State.DEFAULT }?=> '\u2200';
 RULE_DOT : { getCurrentState() == State.DEFAULT }?=> '.';
 
 RULE_EMBEDDED_TEXT  : { getCurrentState() == State.DEFAULT }?=> '%n' { stack.push(State.EMBEDDED_TEXT_BEFORE_BRACKET); };
-RULE_EMBEDDED_OTHER : { getCurrentState() == State.DEFAULT }?=> '%' ~('n') ( RULE_LOWER | RULE_UPPER )* ('*'|'?'|'+')? 
+RULE_EMBEDDED_OTHER : { getCurrentState() == State.DEFAULT }?=> '%' ~('n') ( RULE_LOWER | RULE_UPPER | RULE_DIGIT | '_')* ('*'|'?'|'+')? 
                                                                 {stack.push(State.EMBEDDED_OTHER_BEFORE_BRACKET);};
 
 

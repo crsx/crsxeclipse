@@ -289,7 +289,7 @@ terminal ARROW			: '→';
 terminal POLY			: '∀';
 terminal DOT			: '.';
 terminal EMBEDDED_TEXT  : '%n';
-terminal EMBEDDED_OTHER : '%' !('n')  ( LOWER | UPPER )* ('*'|'?'|'+')? ;
+terminal EMBEDDED_OTHER : '%' !('n')  ( LOWER | UPPER | DIGIT | '_')* ('*'|'?'|'+')? ;
 
 terminal COLONCOLONEQ	: '::=';
 terminal COLONCOLON		: '::';
