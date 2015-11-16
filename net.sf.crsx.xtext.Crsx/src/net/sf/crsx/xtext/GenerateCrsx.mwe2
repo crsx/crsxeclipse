@@ -6,7 +6,7 @@ import org.eclipse.xtext.ui.generator.*
 
 var projectName = "net.sf.crsx.xtext.Crsx"
 var grammarURI = "platform:/resource/${projectName}/src/net/sf/crsx/xtext/Crsx.xtext"
-var file.extensions = "crs"
+var file.extensions = "crs,term"
 var runtimeProject = "../${projectName}"
 
 Workflow {
