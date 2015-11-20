@@ -10,6 +10,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
+import org.eclipse.xtext.ui.editor.outline.impl.EStructuralFeatureNode;
 
 import net.sf.crsx.xtext.Utils;
 import net.sf.crsx.xtext.crsx.Declaration;
@@ -61,6 +62,7 @@ public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		
 		Utils.CrsxDeclarationType declType = Utils.determineDeclarationType(declaration);
 		IOutlineNode effectiveParentNode = parentNode;
+		String functionSortName = null;
 		
 		if( declType == Utils.CrsxDeclarationType.TERM ||
 				declType == Utils.CrsxDeclarationType.GROUP ){
@@ -70,12 +72,19 @@ public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 			
 		}else if(grouping && (declType == Utils.CrsxDeclarationType.RULE)){
 			
-			String functionSortName = Utils.ruleFunctionSortName(declaration);
-			effectiveParentNode = functionSortMap.getOrDefault(functionSortName, parentNode);
+			functionSortName = Utils.ruleFunctionSortName(declaration);
+			effectiveParentNode = functionSortMap.get(functionSortName);
 			
 		}else if(grouping && (declType == Utils.CrsxDeclarationType.NAMED_RULE)){
-			String functionSortName = Utils.namedRuleFunctionSortName(declaration);
-			effectiveParentNode = functionSortMap.getOrDefault(functionSortName, parentNode);
+			functionSortName = Utils.namedRuleFunctionSortName(declaration);
+			effectiveParentNode = functionSortMap.get(functionSortName);
+		}
+		
+		if(effectiveParentNode == null){
+			Image image = imageDispatcher.invoke(declaration);
+			String label = String.format("%s[...]:: ?", functionSortName);
+			effectiveParentNode = createEObjectNode(parentNode, declaration, image, label, false);
+			functionSortMap.put(functionSortName, effectiveParentNode);
 		}
 			
 		Object text = textDispatcher.invoke(declaration);
@@ -87,7 +96,7 @@ public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		
 		if( grouping && (declType == Utils.CrsxDeclarationType.FUNCTION_SORT
 				|| declType == Utils.CrsxDeclarationType.POLYMORPHIC_FUNCTION_SORT)){
-			String functionSortName = Utils.functionSortName(declaration);
+			functionSortName = Utils.functionSortName(declaration);
 			functionSortMap.put(functionSortName, node);
 		}
 	}
