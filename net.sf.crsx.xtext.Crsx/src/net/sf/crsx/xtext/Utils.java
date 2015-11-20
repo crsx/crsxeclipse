@@ -280,6 +280,41 @@ public class Utils {
 	}
 	
 	/**
+	 * Get text coresponding to Constructor AST element
+	 * 
+	 * @param c Constructor object
+	 * @return String coresponding to constructor
+	 */
+	public static String getConstructorText(Constructor c){
+		if(c == null){
+			return "<unknown>";
+		}
+		
+		ICompositeNode node = NodeModelUtils.getNode(c);
+		return NodeModelUtils.getTokenText(node);
+	}
+	
+	/**
+	 * Get function sort name of name rule
+	 * 
+	 * @param decl Declaration object which is named rule
+	 * @return Function sort name 
+	 */
+	public static String namedRuleFunctionSortName(Declaration decl){
+		return getConstructorText(decl.getLeft().getConstructor());
+	}
+	
+	/**
+	 * Get function sort name of unnamed rule
+	 * 
+	 * @param decl Declaration object which is unnamed rule
+	 * @return Function sort name
+	 */
+	public static String ruleFunctionSortName(Declaration decl){
+		return getConstructorText(decl.getOptionOrTerm().getConstructor());
+	}
+	
+	/**
 	 * Returns left side of named rule
 	 * 
 	 * @param decl 	named rule

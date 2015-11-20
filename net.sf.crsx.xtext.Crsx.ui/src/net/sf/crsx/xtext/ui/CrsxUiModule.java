@@ -5,6 +5,7 @@
 package net.sf.crsx.xtext.ui;
 
 import net.sf.crsx.xtext.ui.contentassist.CrsxEditStrategyProvider;
+import net.sf.crsx.xtext.ui.outline.CrsxGroupFunctionsAction;
 import net.sf.crsx.xtext.ui.preferences.CrsxRootPreferencePage;
 import net.sf.crsx.xtext.ui.syntaxcoloring.CrsxHighlightingConfiguration;
 import net.sf.crsx.xtext.ui.syntaxcoloring.CrsxSemanticHighlightingCalculator;
@@ -13,6 +14,7 @@ import net.sf.crsx.xtext.ui.syntaxcoloring.CrsxTokenToAttributeIdMapper;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
+import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.ISemanticHighlightingCalculator;
@@ -37,6 +39,10 @@ public class CrsxUiModule extends net.sf.crsx.xtext.ui.AbstractCrsxUiModule {
 	public void configureTokenTypeToStringMapper(Binder binder) {
 		binder.bind(AbstractAntlrTokenToAttributeIdMapper.class).to(
 				CrsxTokenToAttributeIdMapper.class);
+	}
+	
+	public void configureGroupingAction(Binder binder) {
+		  binder.bind(IOutlineContribution.class).annotatedWith(com.google.inject.name.Names.named("groupFunctions")).to(CrsxGroupFunctionsAction.class);
 	}
 
 	@Override

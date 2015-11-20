@@ -3,6 +3,9 @@
 */
 package net.sf.crsx.xtext.ui.outline;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
@@ -18,6 +21,33 @@ import net.sf.crsx.xtext.crsx.Term;
  */
 public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	
+	boolean grouping = false;
+	
+	Map<String,IOutlineNode> functionSortMap;
+	
+	public CrsxOutlineTreeProvider(){
+		functionSortMap = new HashMap<String,IOutlineNode>();
+	}
+	
+	/**
+	 * Rules of the same function sort will be grouped under function sort node
+	 * if set to true
+	 * 
+	 * @param value
+	 */
+	public void setGrouping(boolean value){
+		this.grouping = value;
+	}
+	
+	/**
+	 * @see #setGrouping(boolean)
+	 * 
+	 * @return
+	 */
+	public boolean getGrouping(){
+		return grouping;
+	}
+	
 	/**
 	 * Creates outline node for declaration
 	 * 
@@ -28,17 +58,37 @@ public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 * @param declaration ecore model declaration node
 	 */
 	protected void _createNode(IOutlineNode parentNode, Declaration declaration) {
+		
 		Utils.CrsxDeclarationType declType = Utils.determineDeclarationType(declaration);
+		IOutlineNode effectiveParentNode = parentNode;
+		
 		if( declType == Utils.CrsxDeclarationType.TERM ||
 				declType == Utils.CrsxDeclarationType.GROUP ){
+			
 			createNodeDispatcher.invoke(parentNode,declaration.getOptionOrTerm());
-		}else{
-			Object text = textDispatcher.invoke(declaration);
-			boolean isLeaf = isLeafDispatcher.invoke(declaration);
-			if (text == null && isLeaf)
-				return;
-			Image image = imageDispatcher.invoke(declaration);
-			createEObjectNode(parentNode, declaration, image, text, isLeaf);
+			return;
+			
+		}else if(grouping && (declType == Utils.CrsxDeclarationType.RULE)){
+			
+			String functionSortName = Utils.ruleFunctionSortName(declaration);
+			effectiveParentNode = functionSortMap.getOrDefault(functionSortName, parentNode);
+			
+		}else if(grouping && (declType == Utils.CrsxDeclarationType.NAMED_RULE)){
+			String functionSortName = Utils.namedRuleFunctionSortName(declaration);
+			effectiveParentNode = functionSortMap.getOrDefault(functionSortName, parentNode);
+		}
+			
+		Object text = textDispatcher.invoke(declaration);
+		boolean isLeaf = isLeafDispatcher.invoke(declaration);
+		if (text == null && isLeaf)
+			return;
+		Image image = imageDispatcher.invoke(declaration);
+		IOutlineNode node = createEObjectNode(effectiveParentNode, declaration, image, text, isLeaf);
+		
+		if( grouping && (declType == Utils.CrsxDeclarationType.FUNCTION_SORT
+				|| declType == Utils.CrsxDeclarationType.POLYMORPHIC_FUNCTION_SORT)){
+			String functionSortName = Utils.functionSortName(declaration);
+			functionSortMap.put(functionSortName, node);
 		}
 	}
 	
@@ -52,6 +102,7 @@ public class CrsxOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 * @param declaration
 	 */
 	protected void _createChildren(DocumentRootNode parentNode, Declaration declaration) {
+		functionSortMap.clear();
 		Utils.CrsxDeclarationType declType = Utils.determineDeclarationType(declaration);
 		if( declType == Utils.CrsxDeclarationType.TERM ||
 				declType == Utils.CrsxDeclarationType.GROUP ){
